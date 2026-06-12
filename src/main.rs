@@ -2,7 +2,7 @@ use esp_idf_svc::eventloop::EspSystemEventLoop;
 use esp_idf_svc::hal::gpio::PinDriver;
 use esp_idf_svc::nvs::EspDefaultNvsPartition;
 use esp_idf_svc::wifi::{AuthMethod, ClientConfiguration, Configuration, EspWifi};
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader, Read, Write}; // ✨ Read をしっかり追加しました！
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 use std::time::Duration;
@@ -66,8 +66,7 @@ fn main() -> anyhow::Result<()> {
             Ok(mut stream) => {
                 let peer_addr = stream.peer_addr()?.to_string();
 
-                // 🛠️ 【最重要修正】BufReaderを使い、HTTPヘッダーの最初の1行（Request Line）だけを瞬時に読み込む
-                // これによりブラウザのKeep-Aliveによる「読み込みフリーズ」を完全に回避します。
+                // BufReaderを使い、HTTPヘッダーの最初の1行（Request Line）だけを瞬時に読み込む
                 let mut reader = BufReader::new(&mut stream);
                 let mut request_line = String::new();
                 if let Err(_) = reader.read_line(&mut request_line) {
@@ -92,10 +91,10 @@ fn main() -> anyhow::Result<()> {
                             let _ = ap_stream.flush();
 
                             let mut ap_buffer = [0; 2048];
+                            // 💡 これで Read トレイトがスコープに入り、エラーが消えます！
                             if let Ok(br) = ap_stream.read(&mut ap_buffer) {
                                 ap_report = String::from_utf8_lossy(&ap_buffer[..br]).to_string();
                             }
-                            // 1台目のオンボードLEDもパケット中継成功で点灯
                             let _ = led.set_high();
                         }
                         Err(e) => {
