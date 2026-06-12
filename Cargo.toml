@@ -1,0 +1,36 @@
+[package]
+name = "esp-web-tier"
+version = "0.1.0"
+authors = ["TatsuyaM2667 <miuranosuketatsuya06@gmail.com>"]
+edition = "2021"
+resolver = "2"
+rust-version = "1.82"
+
+[[bin]]
+name = "esp-web-tier"
+harness = false # do not use the built-in cargo test harness -> resolve rust-analyzer errors
+
+[profile.release]
+opt-level = "s"
+
+[patch.crates-io]
+esp-idf-sys = { git = "https://github.com/esp-rs/esp-idf-sys.git" }
+esp-idf-hal = { git = "https://github.com/esp-rs/esp-idf-hal.git" }
+esp-idf-svc = { git = "https://github.com/esp-rs/esp-idf-svc.git" }
+
+[dependencies]
+log = "0.4"
+esp-idf-svc = { version = "0.52.1", features = ["critical-section", "embassy-time-driver", "embassy-sync"] }
+# Remove `generic-queue-8` if you plan to use `embassy-time` WITH `embassy-executor`
+embassy-time = { version = "0.5", features = ["generic-queue-8"] }
+anyhow = "1.0.102"
+
+[build-dependencies]
+embuild = "0.33"
+
+[profile.dev]
+opt-level = "z"      # サイズ最優先（"s" よりさらに強力に縮小するらしい）
+lto = true           # ガチのフルリンク時最適化（無駄なデッドコードを徹底排除）
+panic = "abort"      # パニック時のスタック展開用コードを削除
+strip = true         # バイナリに含まれるデバッグ用のシンボル情報を100%完全に消し去る
+debug = 0            #デバッグシンボルの生成そのものをゼロに
