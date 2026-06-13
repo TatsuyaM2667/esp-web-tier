@@ -20,13 +20,21 @@ fn main() -> anyhow::Result<()> {
     let sys_loop = EspSystemEventLoop::take()?;
     let nvs = EspDefaultNvsPartition::take()?;
 
+<<<<<<< HEAD
     // 通信成立時に光らせるオンボードLED（GPIO2）
+=======
+    //  通信成立時に光らせるためのオンボードLED（GPIO2）の初期化
+>>>>>>> f22cf4b713be38036e2e1ce6dd33b7f33757c54f
     let mut led = PinDriver::output(peripherals.pins.gpio2)?;
     led.set_low()?;
 
     // Wi-Fi接続処理
     let mut wifi = EspWifi::new(peripherals.modem, sys_loop, Some(nvs))?;
 
+<<<<<<< HEAD
+=======
+    // 環境変数からSSIDとPASSを安全に固定長文字列（heapless）へ格納
+>>>>>>> f22cf4b713be38036e2e1ce6dd33b7f33757c54f
     let mut ssid = heapless::String::<32>::new();
     let _ = ssid.push_str(env!("ESP_SSID"));
 
@@ -76,7 +84,15 @@ fn main() -> anyhow::Result<()> {
                     continue;
                 }
 
+<<<<<<< HEAD
                 log::info!("[Web Tier] Request received: {}", request_line.trim());
+=======
+                // JavaScriptからの非同期ログ要求（/api/stream）の判定
+                if request_line.starts_with("GET /api/stream")
+                    || request_line.contains("/api/stream")
+                {
+                    log::info!("[Web Tier]  JavaScriptからの要求を検知。2台目へ中継...");
+>>>>>>> f22cf4b713be38036e2e1ce6dd33b7f33757c54f
 
                 // -------------------------------------------------------------
                 // 📡 パターンA: JavaScriptからの定期ログ要求 (/api/stream) の場合
@@ -95,6 +111,7 @@ fn main() -> anyhow::Result<()> {
                             let _ = ap_stream.write_all(command.as_bytes());
                             let _ = ap_stream.flush();
 
+<<<<<<< HEAD
                             // APサーバーからのレスポンスをすべて読み切る
                             let mut ap_buffer = [0; 512];
                             loop {
@@ -112,6 +129,12 @@ fn main() -> anyhow::Result<()> {
                                 ap_report = "<span style='color:#f59e0b;'>[AP Empty] No response data</span>".to_string();
                             } else {
                                 let _ = led.set_high();
+=======
+                            let mut ap_buffer = [0; 2048];
+                            // これで Read トレイトがスコープに入る
+                            if let Ok(br) = ap_stream.read(&mut ap_buffer) {
+                                ap_report = String::from_utf8_lossy(&ap_buffer[..br]).to_string();
+>>>>>>> f22cf4b713be38036e2e1ce6dd33b7f33757c54f
                             }
                         }
                         Err(e) => {
@@ -149,9 +172,18 @@ fn main() -> anyhow::Result<()> {
                     continue;
                 }
 
+<<<<<<< HEAD
                 // -------------------------------------------------------------
                 // 🌐 パターンB: ブラウザで「http://IP:8085/」を叩いた初期アクセスの非同期土台
                 // -------------------------------------------------------------
+=======
+                // 初回アクセス（ブラウザでURLを叩いたとき）に返す、土台となるターミナルUI
+                log::info!(
+                    "[Web Tier] ブラウザがメインコンソールに接続しました: {}",
+                    peer_addr
+                );
+
+>>>>>>> f22cf4b713be38036e2e1ce6dd33b7f33757c54f
                 let response_body = format!(
                     "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Distributed Core Console</title>\
                     <style>\
