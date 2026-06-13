@@ -20,14 +20,14 @@ fn main() -> anyhow::Result<()> {
     let sys_loop = EspSystemEventLoop::take()?;
     let nvs = EspDefaultNvsPartition::take()?;
 
-    // ✨ 通信成立時に光らせるためのオンボードLED（GPIO2）の初期化
+    //  通信成立時に光らせるためのオンボードLED（GPIO2）の初期化
     let mut led = PinDriver::output(peripherals.pins.gpio2)?;
     led.set_low()?;
 
     // Wi-Fi接続処理
     let mut wifi = EspWifi::new(peripherals.modem, sys_loop, Some(nvs))?;
 
-    // 🔒 環境変数からSSIDとPASSを安全に固定長文字列（heapless）へ格納
+    // 環境変数からSSIDとPASSを安全に固定長文字列（heapless）へ格納
     let mut ssid = heapless::String::<32>::new();
     let _ = ssid.push_str(env!("ESP_SSID"));
 
@@ -77,11 +77,11 @@ fn main() -> anyhow::Result<()> {
                     continue;
                 }
 
-                // 💡 JavaScriptからの非同期ログ要求（/api/stream）の判定
+                // JavaScriptからの非同期ログ要求（/api/stream）の判定
                 if request_line.starts_with("GET /api/stream")
                     || request_line.contains("/api/stream")
                 {
-                    log::info!("[Web Tier] 📡 JavaScriptからの要求を検知！ 2台目へ中継します...");
+                    log::info!("[Web Tier]  JavaScriptからの要求を検知。2台目へ中継...");
 
                     let mut ap_report = String::new();
                     match TcpStream::connect(AP_SERVER_ADDRESS) {
@@ -91,7 +91,7 @@ fn main() -> anyhow::Result<()> {
                             let _ = ap_stream.flush();
 
                             let mut ap_buffer = [0; 2048];
-                            // 💡 これで Read トレイトがスコープに入り、エラーが消えます！
+                            // これで Read トレイトがスコープに入る
                             if let Ok(br) = ap_stream.read(&mut ap_buffer) {
                                 ap_report = String::from_utf8_lossy(&ap_buffer[..br]).to_string();
                             }
@@ -131,9 +131,9 @@ fn main() -> anyhow::Result<()> {
                     continue;
                 }
 
-                // 🌐 初回アクセス（ブラウザでURLを叩いたとき）に返す、土台となるターミナルUI
+                // 初回アクセス（ブラウザでURLを叩いたとき）に返す、土台となるターミナルUI
                 log::info!(
-                    "[Web Tier] 🖥️ ブラウザがメインコンソールに接続しました: {}",
+                    "[Web Tier] ブラウザがメインコンソールに接続しました: {}",
                     peer_addr
                 );
 
