@@ -33,7 +33,7 @@ fn main() -> anyhow::Result<()> {
     let mut password = heapless::String::<64>::new();
     let _ = password.push_str(env!("ESP_PASSWORD"));
 
-    log::info!("[Web Tier] Wi-Fi 接続を試みています: {}...", ssid);
+    log::info!("[Web Tier] Wi-Fi 接続...: {}...", ssid);
 
     wifi.set_configuration(&Configuration::Client(ClientConfiguration {
         ssid,
@@ -148,7 +148,7 @@ fn main() -> anyhow::Result<()> {
                 }
 
                 log::info!(
-                    "[Web Tier] ブラウザのメインUIコンソールを描画します: {}",
+                    "[Web Tier] ブラウザのメインUIコンソールを描画: {}",
                     peer_addr
                 );
 
