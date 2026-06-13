@@ -121,7 +121,6 @@ fn main() -> anyhow::Result<()> {
                         }
                     }
 
-                    // ログコンテナの中に動的に追加される「1行分のHTMLパーツ」
                     let log_line = format!(
                         "<div class='log-entry'><span class='badge'>[LIVE]</span> Client: {} ➡️ AP Layer ({}) ➡️ AP Response: {}</div>",
                         peer_addr, AP_SERVER_ADDRESS, ap_report.trim()
