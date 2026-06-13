@@ -79,11 +79,8 @@ fn main() -> anyhow::Result<()> {
                 let req = request_line.trim();
                 log::info!("[Web Tier] リクエスト受信: {}", req);
 
-                // -------------------------------------------------------------
-                // 📡 パターンA: 厳格に「GET /api/stream」で始まる場合のみ中継APIとして処理
-                // -------------------------------------------------------------
                 if req.starts_with("GET /api/stream") {
-                    log::info!("[Web Tier] 📡 JavaScriptからのバックグラウンド同期要求を検知。");
+                    log::info!("[Web Tier] JavaScriptからのバックグラウンド同期要求を検知。");
                     let mut ap_report = String::new();
 
                     match TcpStream::connect_timeout(
@@ -126,7 +123,7 @@ fn main() -> anyhow::Result<()> {
 
                     // ログコンテナの中に動的に追加される「1行分のHTMLパーツ」
                     let log_line = format!(
-                        "<div class='log-entry'><span class='badge'>[LIVE]</span> 📡 Client: {} ➡️ AP Layer ({}) ➡️ AP Response: {}</div>",
+                        "<div class='log-entry'><span class='badge'>[LIVE]</span> Client: {} ➡️ AP Layer ({}) ➡️ AP Response: {}</div>",
                         peer_addr, AP_SERVER_ADDRESS, ap_report.trim()
                     );
 
@@ -150,11 +147,8 @@ fn main() -> anyhow::Result<()> {
                     continue;
                 }
 
-                // -------------------------------------------------------------
-                // 🌐 パターンB: それ以外（ブラウザでの初期アクセスなど）は、美しいUIを返す
-                // -------------------------------------------------------------
                 log::info!(
-                    "[Web Tier] 🖥️ ブラウザのメインUIコンソールを描画します: {}",
+                    "[Web Tier] ブラウザのメインUIコンソールを描画します: {}",
                     peer_addr
                 );
 
